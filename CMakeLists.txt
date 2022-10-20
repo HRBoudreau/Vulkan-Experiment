@@ -1,0 +1,28 @@
+cmake_minimum_required(VERSION 3.19)
+
+set(CMAKE_CXX_COMPILER g++.exe)
+set(CMAKE_C_COMPILER gcc.exe)
+project(vkFun)
+
+add_executable(vkFun ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
+target_sources(vkFun PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/App.cpp)
+target_sources(vkFun PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Entity.cpp)
+target_sources(vkFun PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Component.cpp)
+target_sources(vkFun PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/BufferData.cpp)
+target_sources(vkFun PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/PipelineData.cpp)
+target_sources(vkFun PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/DescriptorSetsData.cpp)
+target_sources(vkFun PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/SwapchainData.cpp)
+target_sources(vkFun PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/InstanceData.cpp)
+target_sources(vkFun PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/WindowData.cpp)
+target_sources(vkFun PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Keyboard.cpp)
+
+target_include_directories(vkFun PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include/)
+target_include_directories(vkFun PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/vendors/glfw-3.3.4/include/)
+target_include_directories(vkFun PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/vendors/)
+target_include_directories(vkFun PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/vendors/Vulkan/include/)
+
+target_link_libraries(vkFun ${CMAKE_CURRENT_SOURCE_DIR}/vendors/glfw-3.3.4/lib/libglfw3.a)
+target_link_libraries(vkFun ${CMAKE_CURRENT_SOURCE_DIR}/vendors/Vulkan/Lib/vulkan-1.lib)
+target_link_libraries(vkFun Gdi32.lib)
+target_link_libraries(vkFun Shell32.lib)
+target_link_libraries(vkFun User32.lib)

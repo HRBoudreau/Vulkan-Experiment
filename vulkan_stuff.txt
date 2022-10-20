@@ -1,0 +1,123 @@
+instance extensions:
+VK_KHR_device_group_creation
+VK_KHR_display
+VK_KHR_external_fence_capabilities
+VK_KHR_external_memory_capabilities
+VK_KHR_external_semaphore_capabilities
+VK_KHR_get_display_properties2
+VK_KHR_get_physical_device_properties2
+VK_KHR_get_surface_capabilities2
+VK_KHR_surface
+VK_KHR_surface_protected_capabilities
+VK_KHR_win32_surface
+VK_EXT_debug_report
+VK_EXT_debug_utils
+VK_EXT_swapchain_colorspace
+VK_NV_external_memory_capabilities
+
+instance layers:
+VK_LAYER_NV_optimus
+GalaxyOverlayVkLayer
+GalaxyOverlayVkLayer_VERBOSE
+GalaxyOverlayVkLayer_DEBUG
+VK_LAYER_VALVE_steam_overlay
+VK_LAYER_VALVE_steam_fossilize
+VK_LAYER_NV_nsight-sys
+VK_LAYER_LUNARG_api_dump
+VK_LAYER_LUNARG_device_simulation
+VK_LAYER_LUNARG_gfxreconstruct
+VK_LAYER_KHRONOS_synchronization2
+VK_LAYER_KHRONOS_validation
+VK_LAYER_LUNARG_monitor
+VK_LAYER_LUNARG_screenshot
+
+
+
+The graphics primitive pipeline executes the following stages, with the logical ordering of the stages matching the order specified here:
+
+    VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT
+
+    VK_PIPELINE_STAGE_2_INDEX_INPUT_BIT_KHR
+
+    VK_PIPELINE_STAGE_2_VERTEX_ATTRIBUTE_INPUT_BIT_KHR
+
+    VK_PIPELINE_STAGE_VERTEX_SHADER_BIT
+
+    VK_PIPELINE_STAGE_TESSELLATION_CONTROL_SHADER_BIT
+
+    VK_PIPELINE_STAGE_TESSELLATION_EVALUATION_SHADER_BIT
+
+    VK_PIPELINE_STAGE_GEOMETRY_SHADER_BIT
+
+    VK_PIPELINE_STAGE_TRANSFORM_FEEDBACK_BIT_EXT
+
+    VK_PIPELINE_STAGE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR
+
+    VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT
+
+    VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT
+
+    VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT
+
+    VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT
+
+The graphics mesh pipeline executes the following stages, with the logical ordering of the stages matching the order specified here:
+
+    VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT
+
+    VK_PIPELINE_STAGE_TASK_SHADER_BIT_NV
+
+    VK_PIPELINE_STAGE_MESH_SHADER_BIT_NV
+
+    VK_PIPELINE_STAGE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR
+
+    VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT
+
+    VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT
+
+    VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT
+
+    VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT
+
+For the compute pipeline, the following stages occur in this order:
+
+    VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT
+
+    VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT
+
+For the subpass shading pipeline, the following stages occur in this order:
+
+    VK_PIPELINE_STAGE_2_SUBPASS_SHADING_BIT_HUAWEI
+
+For graphics pipeline commands executing in a render pass with a fragment density map attachment, the following pipeline stage where the fragment density map read happens has no particular order relative to the other stages, except that it is logically earlier than VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT:
+
+    VK_PIPELINE_STAGE_FRAGMENT_DENSITY_PROCESS_BIT_EXT
+
+    VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT
+
+The conditional rendering stage is formally part of both the graphics, and the compute pipeline. The pipeline stage where the predicate read happens has unspecified order relative to other stages of these pipelines:
+
+    VK_PIPELINE_STAGE_CONDITIONAL_RENDERING_BIT_EXT
+
+For the transfer pipeline, the following stages occur in this order:
+
+    VK_PIPELINE_STAGE_TRANSFER_BIT
+
+For host operations, only one pipeline stage occurs, so no order is guaranteed:
+
+    VK_PIPELINE_STAGE_HOST_BIT
+
+For the command preprocessing pipeline, the following stages occur in this order:
+
+    VK_PIPELINE_STAGE_COMMAND_PREPROCESS_BIT_NV
+
+For acceleration structure operations, only one pipeline stage occurs, so no order is guaranteed:
+
+    VK_PIPELINE_STAGE_ACCELERATION_STRUCTURE_BUILD_BIT_KHR
+
+For the ray tracing pipeline, the following stages occur in this order:
+
+    VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT
+
+    VK_PIPELINE_STAGE_RAY_TRACING_SHADER_BIT_KHR
+
