@@ -2,6 +2,8 @@
 
 #include <string>
 #include <iostream>
+#define STB_IMAGE_IMPLEMENTATION
+#include <glm/stb_image.h>
 
 void createBufferData(VkDevice device, uint32_t queueFamily, VkBufferUsageFlags usage, BufferData &bufferData) {
     VkBufferCreateInfo bufferCreateInfo = {};
@@ -65,4 +67,57 @@ void writeDeviceMemory(VkDevice device, BufferData &bufferStruct, void* copyData
 void createBufferDataWithData(VkDevice device, uint32_t queueFamily, VkBufferUsageFlags usage, BufferData &bufferStruct, void* copyData) {
     createBufferData(device,queueFamily,usage,bufferStruct);
     writeDeviceMemory(device, bufferStruct, copyData);
+}
+
+
+void createImageData(VkDevice device, uint32_t queueFamily, std::string fileName, ImageData &imageData) {
+    int width, height, channels;
+    stbi_uc* pixels = stbi_load(fileName.c_str(), &width, &height, &channels, STBI_rgb_alpha);
+    if ( pixels == nullptr ) {
+        std::string s = "Failed to load image!";
+        throw std::runtime_error( s.c_str() );
+    }
+    BufferData stbRaw;
+    stbRaw.size = width*height*4;
+
+    createBufferDataWithData(device,queueFamily,VK_BUFFER_USAGE_TRANSFER_SRC_BIT, stbRaw, pixels);
+    stbi_image_free(pixels);
+
+    VkImageCreateInfo imageCreateInfo = {};
+    imageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+    imageCreateInfo.pNext = nullptr;
+    imageCreateInfo.flags = 0;
+    imageCreateInfo.imageType = VK_IMAGE_TYPE_2D;
+    imageCreateInfo.format = VK_FORMAT_R8G8B8A8_SRGB;
+    imageCreateInfo.extent.width = static_cast<uint32_t>(width);
+    imageCreateInfo.extent.height = static_cast<uint32_t>(height);
+    imageCreateInfo.extent.depth = 1;
+    imageCreateInfo.mipLevels = 1;
+    imageCreateInfo.arrayLayers = 1;
+    imageCreateInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+    imageCreateInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
+    imageCreateInfo.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+    imageCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+    imageCreateInfo.queueFamilyIndexCount = 1;
+    imageCreateInfo.pQueueFamilyIndices = &queueFamily;
+    imageCreateInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+    VkResult err = vkCreateImage(device, &imageCreateInfo, nullptr, &imageData.image);
+    if ( err != VK_SUCCESS ) {
+        throw std::runtime_error("failed to create image!");
+    }
+
+    VkMemoryRequirements memRequirements;
+    vkGetImageMemoryRequirements(device, imageData.image, &memRequirements);
+
+    VkMemoryAllocateInfo allocInfo{};
+    allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+    allocInfo.allocationSize = memRequirements.size;
+    allocInfo.memoryTypeIndex = 2;
+    err = vkAllocateMemory(device, &allocInfo, nullptr, &imageData.bufferData.deviceMemory);
+    if ( err != VK_SUCCESS ) {
+        throw std::runtime_error("failed to allocate image memory!");
+    }
+
+    vkBindImageMemory(device, imageData.image, imageData.bufferData.deviceMemory, 0 );
+    
 }

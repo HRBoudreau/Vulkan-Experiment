@@ -10,7 +10,8 @@ extern uint32_t components[MAX_ENTITIES];
 
 typedef enum ComponentBit {
     COMPONENT_TRANSFORM_BIT = 0x00000001,
-    COMPONENT_MESH_BIT = 0x00000002
+    COMPONENT_MESH_BIT = 0x00000002,
+    COMPONENT_SCRIPT_BIT = 0x00000004
 } ComponentBit;
 typedef uint32_t ComponentFlag;
 

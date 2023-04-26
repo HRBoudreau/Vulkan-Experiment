@@ -194,8 +194,8 @@ void createPipeline( PipelineData &pipelineData, VkDevice device, DescriptorSets
             pipelineData.viewport.height = windowData.currentSurfaceFramebufferHeight;
             pipelineData.viewport.minDepth = 0.0f;
             pipelineData.viewport.maxDepth = 1.0f;
-            pipelineData.scissor.extent.width = 640;
-            pipelineData.scissor.extent.height = 480;
+            pipelineData.scissor.extent.width = windowData.currentSurfaceFramebufferWidth;
+            pipelineData.scissor.extent.height = windowData.currentSurfaceFramebufferHeight;
             pipelineData.scissor.offset.x = 0;
             pipelineData.scissor.offset.y = 0;
         VkPipelineViewportStateCreateInfo viewportState = {};

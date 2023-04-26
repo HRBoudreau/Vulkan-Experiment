@@ -1,4 +1,6 @@
 
+#define N_DEBUG
+
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
@@ -43,12 +45,16 @@ std::vector<Vertex> vertices2 = {
     {{-0.5f, 0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}},
     {{0.5f, 0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}},
     
-    {{0.7f, -0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
-    {{0.7f, 0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}}
+    {{0.5f, -0.5f, -1.0f}, {1.0f, 1.0f, 1.0f}},
+    {{0.5f, 0.5f, -1.0f}, {1.0f, 0.0f, 0.0f}},
+    {{-0.5f, -0.5f, -1.0f}, {0.0f, 0.0f, 1.0f}},
+    {{-0.5f, 0.5f, -1.0f}, {0.0f, 0.0f, 1.0f}}
 };
 
 std::vector<uint32_t> indices2 = {
-    0,1,2, 2,1,3, 1,4,3, 3,4,5
+    0,1,2, 2,1,3, 1,4,3, 3,4,5,
+    2,6,0, 2,7,6, 0,6,4, 0,4,1,
+    2,3,7, 2,3,5, 5,4,7, 7,4,6
 };
 
 bool Update ( InstanceData &instanceData );
@@ -89,7 +95,7 @@ void App() {
     bool exit = false;
     while ( exit == false ) {
         Render( instanceData );
-        exit = Update ( instanceData );
+        exit = Update( instanceData );
     }
 
     #ifndef N_DEBUG
@@ -138,9 +144,11 @@ void Render( InstanceData &instanceData ) {
     commandBufferBeginInfo.flags = 0;
     commandBufferBeginInfo.pInheritanceInfo = nullptr;
 
-    glm::mat4x4 translate = glm::translate(glm::mat4(1.0f),glm::vec3(instanceData.camera.position));
+    glm::mat4x4 translate = glm::translate(glm::mat4(1.0f), glm::vec3(instanceData.camera.position));
     translate = glm::inverse(translate);
-    glm::mat4x4 writeUBO[2] = {instanceData.perspectiveMatrix,translate};
+    float aspect = (float)instanceData.windowData.currentSurfaceFramebufferWidth / (float)instanceData.windowData.currentSurfaceFramebufferHeight;
+    instanceData.perspectiveMatrix = glm::perspective(instanceData.fov, aspect, 0.1f, 100.0f);
+    glm::mat4x4 writeUBO[3] = {instanceData.perspectiveMatrix,translate,instanceData.camera.rotation};
     writeDeviceMemory( instanceData.device, instanceData.UBO, (void*)writeUBO);
     
     VkResult err = vkBeginCommandBuffer ( instanceData.commandBuffers[indic], &commandBufferBeginInfo );
@@ -159,10 +167,12 @@ void Render( InstanceData &instanceData ) {
     for ( int i = 0; i < MAX_ENTITIES; ++i ) {
         if ( components[i] & COMPONENT_MESH_BIT ) {
             Mesh* m = getComponent<Mesh>(i);
-            std::cout << "MESH: " << i << " indexCount: " << m->indicesCount << std::endl;
+            //std::cout << "MESH: " << i << " indexCount: " << m->indicesCount << std::endl;
             vkCmdBindVertexBuffers(instanceData.commandBuffers[indic], 0, 1, &m->vertices.buffer, offsets);
             vkCmdBindIndexBuffer(instanceData.commandBuffers[indic], m->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
             Transform* t = getComponent<Transform>(i);
+            t->rotation = glm::mat4_cast(glm::rotate(glm::quat_cast(t->rotation),.001f,glm::vec3(0,1,0)));
+
             vkCmdPushConstants(instanceData.commandBuffers[indic], instanceData.pipelineData.pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(Transform), (void*)t);
             vkCmdDrawIndexed(instanceData.commandBuffers[indic], static_cast<uint32_t>(m->indicesCount), 1, 0, 0, 0);
         }

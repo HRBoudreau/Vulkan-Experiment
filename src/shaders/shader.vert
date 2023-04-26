@@ -8,14 +8,16 @@ layout(location = 1) in vec3 inColor;
 layout(binding = 0 ) uniform UBO {
    mat4 perspectiveMatrix;
    mat4 viewMatrix;
+   mat4 viewRotation;
 } inst;
 
 layout( push_constant )  uniform model {
-    vec4 model;
+    vec4 translate;
+    mat4 rot;
 } modelTransform;
 
 void main() {
-    vec4 modelView = vec4(inPosition, 1.0) + modelTransform.model;
+    vec4 modelView = ( modelTransform.rot*vec4(inPosition,1) ) + modelTransform.translate;
     gl_Position = inst.perspectiveMatrix * inst.viewMatrix * modelView;
     fragColor = inColor;
 }

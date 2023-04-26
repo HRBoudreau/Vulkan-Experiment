@@ -1,6 +1,7 @@
 #include <DescriptorSetsData.h>
 
 void createDescriptorSetLayout(DescriptorSetsData &descriptorSetsData, VkDevice device) {
+    //
     VkDescriptorSetLayoutBinding bindings[1];
     bindings[0].binding = 0;
     bindings[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;

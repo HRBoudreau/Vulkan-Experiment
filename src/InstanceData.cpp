@@ -191,11 +191,12 @@ void createInstanceData(InstanceData &instanceData) {
         throw std::runtime_error( s.c_str() );
     }
 
-    createWindowData( instanceData.windowData, instanceData.instance, instanceData.physicalDevice, 640, 480 );
+    createWindowData( instanceData.windowData, instanceData.instance, instanceData.physicalDevice, 1280, 960 );
     float aspect = (float)instanceData.windowData.currentSurfaceFramebufferWidth / (float)instanceData.windowData.currentSurfaceFramebufferHeight;
-    instanceData.perspectiveMatrix = glm::perspective(90.0f, aspect, 0.1f, 100.0f);
+    instanceData.fov = 90.0f;
+    instanceData.perspectiveMatrix = glm::perspective(instanceData.fov, aspect, 0.1f, 100.0f);
     createSwapchainData( instanceData.swapchainData, instanceData.windowData, instanceData.device, instanceData.physicalDevice, instanceData.graphicsFamily, instanceData.memoryTypeTransfer );
-    instanceData.UBO.size = sizeof(glm::mat4x4)*2;
+    instanceData.UBO.size = sizeof(glm::mat4x4)*3;
     createBufferDataWithData( instanceData.device, instanceData.graphicsFamily, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, instanceData.UBO, (void*)(&instanceData.perspectiveMatrix) );
     
 
@@ -265,6 +266,7 @@ void createInstanceData(InstanceData &instanceData) {
     }
 
     instanceData.camera.position = {0.0f,0.0f,0.0f,1.0f};
+    instanceData.camera.rotation = glm::mat4x4();
 }
 
 VkBool32 myDebugCallback (

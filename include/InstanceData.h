@@ -45,6 +45,7 @@ typedef struct InstanceData {
     std::vector<const char*> deviceExtensionNames;
     std::vector<const char*> deviceLayerNames;
     glm::mat4x4 perspectiveMatrix;
+    float fov;
 
     //other struct data types
     WindowData windowData;

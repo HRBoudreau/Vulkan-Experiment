@@ -11,7 +11,9 @@
 void createWindowData( WindowData &windowData, VkInstance instance, VkPhysicalDevice physicalDevice, int screenWidth, int screenHeight ) {
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-    windowData.glfwWindow = glfwCreateWindow(screenWidth,screenHeight,"myWindow",NULL,NULL);
+    GLFWmonitor* monitor = NULL;
+    // monitor = glfwGetPrimaryMonitor();
+    windowData.glfwWindow = glfwCreateWindow(screenWidth,screenHeight,"myWindow",monitor,NULL);
     if ( windowData.glfwWindow == NULL ) {
         std::string s = "Failed to Create glfwWindow!";
         throw std::runtime_error( s.c_str() );
