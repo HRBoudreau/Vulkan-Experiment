@@ -54,11 +54,22 @@ std::vector<Vertex> vertices2 = {
 std::vector<uint32_t> indices2 = {
     0,1,2, 2,1,3, 1,4,3, 3,4,5,
     2,6,0, 2,7,6, 0,6,4, 0,4,1,
-    2,3,7, 2,3,5, 5,4,7, 7,4,6
+    2,3,7, 7,3,5, 5,4,7, 7,4,6
 };
 
 bool Update ( InstanceData &instanceData );
 void Render( InstanceData &instanceData );
+
+ScriptType testScript = [](Entity t){
+    Transform* trans = getComponent<Transform>(t);
+    if(trans->position.y < 3.0f) {
+        trans->position.y += .0001f;
+    }
+    else {
+        trans->position.y = -1.0f;
+    }
+    //std::cout << trans->position.y << std::endl;
+};
 
 void App() {
     
@@ -66,31 +77,22 @@ void App() {
     createInstanceData(instanceData);
     InitKeyboard(instanceData);
     // buffers
-    indexBufferStruct.size = sizeof(indices[0])*indices.size();
-    createBufferDataWithData(instanceData.device, instanceData.graphicsFamily,VK_BUFFER_USAGE_INDEX_BUFFER_BIT,indexBufferStruct, (void*)indices.data());
     indexBufferStruct2.size = sizeof(indices2[0])*indices2.size();
     createBufferDataWithData(instanceData.device, instanceData.graphicsFamily,VK_BUFFER_USAGE_INDEX_BUFFER_BIT,indexBufferStruct2, (void*)indices2.data());
-    vertexBufferStruct.size = vertices.size()*sizeof(vertices[0]);
-    createBufferDataWithData(instanceData.device, instanceData.graphicsFamily, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, vertexBufferStruct, (void*)vertices.data() );
     vertexBufferStruct2.size = vertices2.size()*sizeof(vertices2[0]);
     createBufferDataWithData(instanceData.device, instanceData.graphicsFamily, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, vertexBufferStruct2, (void*)vertices2.data() );
     
     Entity t = createEntity();
     addComponent<Mesh>(t);
     Mesh* M = getComponent<Mesh>(t);
-    M->indices = indexBufferStruct;
-    M->vertices = vertexBufferStruct;
-    M->indicesCount = indices.size();
-    
-
-    t = createEntity();
-    addComponent<Mesh>(t);
-    M = getComponent<Mesh>(t);
     M->indices = indexBufferStruct2;
     M->vertices = vertexBufferStruct2;
     M->indicesCount = indices2.size();
     Transform* trans = getComponent<Transform>(t);
-    trans->position = {1.0f,1.0f,-2.0f,1.0f};
+    trans->position = {1.0f,0.0f,-2.0f,1.0f};
+    addComponent<Script>(t);
+    Script* S = getComponent<Script>(t);
+    *S = &testScript;
 
     bool exit = false;
     while ( exit == false ) {
@@ -106,6 +108,10 @@ void App() {
 
 bool Update ( InstanceData &instanceData ) {
     bool ret = ProcessInputs(instanceData);
+    for ( std::pair<Entity, Script> pair : ScriptList ) {
+        ScriptType currentScript = *(pair.second);
+        currentScript(pair.first);
+    }
     return ret;
 }
 
@@ -133,7 +139,7 @@ void Render( InstanceData &instanceData ) {
     renderPassBeginInfo.renderArea = renderArea;
     renderPassBeginInfo.clearValueCount =2;
     VkClearValue clearValues[2];
-    clearValues[0].color = { {0.0f,0.5f,0.5f,1.0f} };
+    clearValues[0].color = { {0.2f,0.0f,0.7f,1.0f} };
     clearValues[1].depthStencil = {1.0f,0};
     renderPassBeginInfo.pClearValues = clearValues;
 
@@ -147,7 +153,8 @@ void Render( InstanceData &instanceData ) {
     glm::mat4x4 translate = glm::translate(glm::mat4(1.0f), glm::vec3(instanceData.camera.position));
     translate = glm::inverse(translate);
     float aspect = (float)instanceData.windowData.currentSurfaceFramebufferWidth / (float)instanceData.windowData.currentSurfaceFramebufferHeight;
-    instanceData.perspectiveMatrix = glm::perspective(instanceData.fov, aspect, 0.1f, 100.0f);
+    //instanceData.fov += .001f*(3.14159265f/180.0f);
+    //instanceData.perspectiveMatrix = glm::perspective(instanceData.fov, aspect, .1f, 100.0f);
     glm::mat4x4 writeUBO[3] = {instanceData.perspectiveMatrix,translate,instanceData.camera.rotation};
     writeDeviceMemory( instanceData.device, instanceData.UBO, (void*)writeUBO);
     
@@ -171,7 +178,7 @@ void Render( InstanceData &instanceData ) {
             vkCmdBindVertexBuffers(instanceData.commandBuffers[indic], 0, 1, &m->vertices.buffer, offsets);
             vkCmdBindIndexBuffer(instanceData.commandBuffers[indic], m->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
             Transform* t = getComponent<Transform>(i);
-            t->rotation = glm::mat4_cast(glm::rotate(glm::quat_cast(t->rotation),.001f,glm::vec3(0,1,0)));
+            //t->rotation = glm::mat4_cast(glm::rotate(glm::quat_cast(t->rotation),.001f,glm::vec3(0,1,0)));
 
             vkCmdPushConstants(instanceData.commandBuffers[indic], instanceData.pipelineData.pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(Transform), (void*)t);
             vkCmdDrawIndexed(instanceData.commandBuffers[indic], static_cast<uint32_t>(m->indicesCount), 1, 0, 0, 0);

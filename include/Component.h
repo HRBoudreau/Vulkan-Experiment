@@ -26,7 +26,8 @@ typedef struct Mesh {
     uint32_t indicesCount;
 } Mesh;
 
-typedef std::string Script;
+typedef void(*ScriptType)(Entity);
+typedef ScriptType *Script;
 
 extern std::unordered_map<Entity, Transform> transformList;
 extern std::unordered_map<Entity, Mesh> MeshList;
@@ -35,7 +36,7 @@ extern std::unordered_map<Entity, Script> ScriptList;
 template<typename T>
 void addComponent(Entity id ) {
     if ( strcmp(typeid(T).name(),typeid(Transform).name())==0 ) {
-        Transform t = { {0.0f,0.0f,0.0f,1.0f}, glm::mat4x4() };
+        Transform t = { {0.0f,0.0f,0.0f,1.0f}, glm::mat4_cast(glm::rotate(glm::quat(),0.0f,glm::vec3(.0f,.0f,1.0f) ) ) };
         transformList.insert( std::make_pair(id, t ) );
         addComponentBit(id, COMPONENT_TRANSFORM_BIT);
         #ifndef N_DEBUG

@@ -104,23 +104,29 @@ bool ProcessInputs(InstanceData &instanceData) {
     if ( glfwGetKey(instanceData.windowData.glfwWindow, GLFW_KEY_W ) == GLFW_PRESS ) {
         KEY_W = true;
         if ( KEY_W ) {
-            instanceData.camera.position[2] += -0.01f;
+            instanceData.camera.position += glm::vec4(.0f,.0f,-.01f,.0f)*instanceData.camera.rotation;
         }
     }
     if ( glfwGetKey(instanceData.windowData.glfwWindow, GLFW_KEY_S ) == GLFW_PRESS ) {
-        instanceData.camera.position[2] += 0.01f;
+        instanceData.camera.position += glm::vec4(.0f,.0f,.01f,.0f)*instanceData.camera.rotation;
     }
     if ( glfwGetKey(instanceData.windowData.glfwWindow, GLFW_KEY_A ) == GLFW_PRESS ) {
-        instanceData.camera.position[0] += -0.01f;
+        instanceData.camera.position += glm::vec4(-0.01f,.0f,.0f,.0f)*instanceData.camera.rotation;
     }
     if ( glfwGetKey(instanceData.windowData.glfwWindow, GLFW_KEY_D ) == GLFW_PRESS ) {
-        instanceData.camera.position[0] += 0.01f;
+        instanceData.camera.position += glm::vec4(0.01f,.0f,.0f,.0f)*instanceData.camera.rotation;
     }
-    if ( glfwGetKey(instanceData.windowData.glfwWindow, GLFW_KEY_Z ) == GLFW_PRESS ) {
-        instanceData.camera.rotation = glm::rotate(instanceData.camera.rotation, glm::radians(10.0f), glm::vec3(0.0f, -1.0f, 0.0f));
+    if ( glfwGetKey(instanceData.windowData.glfwWindow, GLFW_KEY_UP ) == GLFW_PRESS ) {
+        instanceData.camera.position += glm::vec4(0.0f,-.005f,.0f,.0f)*instanceData.camera.rotation;
     }
-    if ( glfwGetKey(instanceData.windowData.glfwWindow, GLFW_KEY_X ) == GLFW_PRESS ) {
-        instanceData.camera.rotation = glm::rotate(instanceData.camera.rotation, glm::radians(10.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    if ( glfwGetKey(instanceData.windowData.glfwWindow, GLFW_KEY_DOWN ) == GLFW_PRESS ) {
+        instanceData.camera.position += glm::vec4(0.0f,.005f,.0f,.0f)*instanceData.camera.rotation;
+    }
+    if ( glfwGetKey(instanceData.windowData.glfwWindow, GLFW_KEY_LEFT ) == GLFW_PRESS ) {
+        instanceData.camera.rotation = glm::rotate(instanceData.camera.rotation, glm::radians(.1f), glm::vec3(0.0f, -1.0f, 0.0f));
+    }
+    if ( glfwGetKey(instanceData.windowData.glfwWindow, GLFW_KEY_RIGHT ) == GLFW_PRESS ) {
+        instanceData.camera.rotation = glm::rotate(instanceData.camera.rotation, glm::radians(.1f), glm::vec3(0.0f, 1.0f, 0.0f));
     }
     if ( glfwGetKey(instanceData.windowData.glfwWindow, GLFW_KEY_G ) == GLFW_PRESS && made == false) {
         Entity t = createEntity();
@@ -128,7 +134,7 @@ bool ProcessInputs(InstanceData &instanceData) {
         Mesh* m = getComponent<Mesh>(t);
         m->indices = indexBufferStruct2;
         m->vertices = vertexBufferStruct2;
-        m->indicesCount = sizeof(indexBufferStruct2);
+        m->indicesCount = 12*3;
         made = true;
     }
 
